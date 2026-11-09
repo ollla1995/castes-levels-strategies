@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Касты. Уровни. Стратегии — Интеллектуальная методология мышления</title>
-  
+
   <!-- Шрифты Google Fonts: Manrope + Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,7 +109,7 @@
       border-radius: var(--radius);
       padding: 30px 28px 28px;
       box-shadow: var(--shadow-sm);
-      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), 
+      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
                   box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
                   border-color 0.24s ease;
       display: flex;
@@ -128,9 +128,9 @@
     }
 
     .btn-primary {
-      padding: 15px 30px;
+      padding: 14px 28px;
       background-color: var(--ink);
-      color: #ffffff;
+      color: #ffffff !important;
       border-radius: var(--radius-sm);
       font-size: 15.5px;
       font-weight: 600;
@@ -145,9 +145,9 @@
     }
 
     .btn-accent {
-      padding: 15px 30px;
+      padding: 14px 28px;
       background-color: var(--accent);
-      color: var(--accent-ink);
+      color: var(--accent-ink) !important;
       border-radius: var(--radius-sm);
       font-size: 15.5px;
       font-weight: 600;
@@ -164,7 +164,7 @@
     .btn-secondary {
       padding: 14px 28px;
       background-color: var(--surface);
-      color: var(--ink);
+      color: var(--ink) !important;
       border: 1px solid var(--line-strong);
       border-radius: var(--radius-sm);
       font-size: 15.5px;
@@ -183,9 +183,9 @@
       top: 0;
       z-index: 1000;
       height: 64px;
-      background-color: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
@@ -195,17 +195,29 @@
       font-size: 14.5px;
       font-weight: 500;
       color: var(--ink-2);
-      cursor: pointer;
       padding: 6px 0;
       position: relative;
+    }
+    .nav-link:hover {
+      color: var(--accent);
     }
     .nav-link.active {
       color: var(--accent);
       font-weight: 700;
     }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
 
     .lang-btn {
-      padding: 3px 7px;
+      padding: 4px 8px;
       font-size: 12px;
       font-weight: 600;
       border-radius: 4px;
@@ -216,82 +228,157 @@
       background-color: var(--surface);
       color: var(--ink);
       font-weight: 700;
+      box-shadow: var(--shadow-sm);
     }
 
-    .tab-content {
+    /* Страницы */
+    .page-section {
       display: none;
     }
-    .tab-content.active {
+    .page-section.active {
       display: block;
+      animation: fadeIn 0.2s ease-in-out;
     }
 
-    @media (max-width: 960px) {
-      .desktop-only { display: none !important; }
-      .mobile-only { display: flex !important; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    @media (min-width: 961px) {
-      .desktop-only { display: flex !important; }
-      .mobile-only { display: none !important; }
+
+    /* Уведомление */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 9999;
+      font-size: 14.5px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border-left: 4px solid var(--accent);
+    }
+
+    /* Мобильное меню */
+    #mobile-menu {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #ffffff;
+      padding: 24px;
+      flex-direction: column;
+      gap: 16px;
+      border-top: 1px solid var(--line);
+      z-index: 999;
+      overflow-y: auto;
+    }
+    #mobile-menu.open {
+      display: flex;
+    }
+
+    @media (max-width: 992px) {
+      .desktop-nav { display: none !important; }
+      .burger-btn { display: flex !important; }
+    }
+    @media (min-width: 993px) {
+      .desktop-nav { display: flex !important; }
+      .burger-btn { display: none !important; }
+      #mobile-menu { display: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ШАПКА САЙТА (HEADER) -->
+  <!-- Всплывающее уведомление -->
+  <div id="toast">
+    <span style="color: var(--accent); font-weight: bold;">✓</span>
+    <span id="toast-text"></span>
+  </div>
+
+  <!-- ШАПКА САЙТА -->
   <header>
     <div class="site-wrap" style="display: flex; align-items: center; justify-content: space-between;">
       
       <!-- Логотип -->
-      <div onclick="navigateTo('home')" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+      <a href="#home" style="display: flex; align-items: center; gap: 8px;">
         <span style="width: 10px; height: 10px; background-color: var(--accent); border-radius: 2px; display: inline-block;"></span>
-        <span id="ui-brand" style="font-family: var(--serif); font-weight: 700; fontSize: 18px; color: var(--ink);">
+        <span id="ui-brand" style="font-family: var(--serif); font-weight: 700; font-size: 18px; color: var(--ink);">
           Касты. Уровни. Стратегии
         </span>
-      </div>
+      </a>
 
-      <!-- Десктопная навигация -->
-      <nav class="desktop-only" style="gap: 22px; align-items: center;">
-        <a class="nav-link active" onclick="navigateTo('home')" id="nav-home">Главная</a>
-        <a class="nav-link" onclick="navigateTo('methodology')" id="nav-methodology">Методология</a>
-        <a class="nav-link" onclick="navigateTo('levelsCastes')" id="nav-levelsCastes">Уровни и Касты</a>
-        <a class="nav-link" onclick="navigateTo('strategies')" id="nav-strategies">Стратегии</a>
-        <a class="nav-link" onclick="navigateTo('products')" id="nav-products">Продукты</a>
-        <a class="nav-link" onclick="navigateTo('programs')" id="nav-programs">Программы</a>
-        <a class="nav-link" onclick="navigateTo('club')" id="nav-club">Клуб</a>
-        <a class="nav-link" onclick="navigateTo('about')" id="nav-about">Об авторе</a>
+      <!-- Меню для компьютеров -->
+      <nav class="desktop-nav" style="gap: 22px; align-items: center;">
+        <a href="#home" class="nav-link active" id="nav-home">Главная</a>
+        <a href="#methodology" class="nav-link" id="nav-methodology">Методология</a>
+        <a href="#levelsCastes" class="nav-link" id="nav-levelsCastes">Уровни и Касты</a>
+        <a href="#strategies" class="nav-link" id="nav-strategies">Стратегии</a>
+        <a href="#products" class="nav-link" id="nav-products">Продукты</a>
+        <a href="#programs" class="nav-link" id="nav-programs">Программы</a>
+        <a href="#club" class="nav-link" id="nav-club">Клуб</a>
+        <a href="#about" class="nav-link" id="nav-about">Об авторе</a>
       </nav>
 
-      <!-- Правый блок: Языки + Корзина + Кабинет -->
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <!-- Переключатель языка -->
-        <div style="display: flex; gap: 3px; background-color: var(--bg-warm); padding: 3px; border-radius: 6px;">
+      <!-- Правый блок: Языки + Корзина + Кабинет + Гамбургер -->
+      <div style="display: flex; align-items: center; gap: 12px;">
+        
+        <!-- Выбор языка -->
+        <div style="display: flex; gap: 2px; background-color: var(--bg-warm); padding: 3px; border-radius: 6px;">
           <button class="lang-btn active" onclick="setLanguage('ru')" id="btn-lang-ru">RU</button>
           <button class="lang-btn" onclick="setLanguage('uk')" id="btn-lang-uk">UK</button>
           <button class="lang-btn" onclick="setLanguage('en')" id="btn-lang-en">EN</button>
         </div>
 
         <!-- Корзина -->
-        <button onclick="navigateTo('cart')" style="padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background-color: var(--surface); color: var(--ink); font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+        <a href="#cart" style="padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background-color: var(--surface); color: var(--ink); font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
           <span id="ui-cart-text">Корзина</span>
           <span id="cart-counter" style="background-color: var(--accent); color: white; border-radius: 50%; width: 18px; height: 18px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">0</span>
+        </a>
+
+        <!-- Кабинет (десктоп) -->
+        <a href="#dashboard" class="desktop-nav" style="padding: 7px 14px; border-radius: var(--radius-sm); background-color: var(--ink); color: #ffffff !important; font-size: 13.5px; font-weight: 600;">
+          Кабинет
+        </a>
+
+        <!-- Кнопка мобильного меню -->
+        <button class="burger-btn" onclick="toggleMobileMenu()" style="display: none; flex-direction: column; gap: 4px; padding: 8px;">
+          <span style="width: 22px; height: 2px; background: var(--ink);"></span>
+          <span style="width: 22px; height: 2px; background: var(--ink);"></span>
+          <span style="width: 16px; height: 2px; background: var(--ink);"></span>
         </button>
 
-        <!-- Кабинет -->
-        <button onclick="navigateTo('dashboard')" class="desktop-only" style="padding: 7px 14px; border-radius: var(--radius-sm); background-color: var(--ink); color: #ffffff; font-size: 13.5px; font-weight: 600;">
-          <span id="ui-dashboard-text">Кабинет</span>
-        </button>
       </div>
-
     </div>
   </header>
 
-  <!-- ОСНОВНОЙ КОНТЕНТ (СТРАНИЦЫ) -->
+  <!-- ВЫПАДАЮЩЕЕ МОБИЛЬНОЕ МЕНЮ -->
+  <div id="mobile-menu">
+    <a href="#home" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Главная</a>
+    <a href="#methodology" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Методология</a>
+    <a href="#levelsCastes" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Уровни и Касты</a>
+    <a href="#strategies" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Стратегии</a>
+    <a href="#products" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Продукты</a>
+    <a href="#programs" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Программы</a>
+    <a href="#club" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Клуб</a>
+    <a href="#about" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif);">Об авторе</a>
+    <a href="#dashboard" onclick="toggleMobileMenu()" style="font-size: 18px; font-family: var(--serif); color: var(--accent);">Личный кабинет</a>
+  </div>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ (РАЗДЕЛЫ САЙТА) -->
   <main style="flex: 1;">
 
     <!-- 1. СТРАНИЦА: ГЛАВНАЯ -->
-    <div id="page-home" class="tab-content active">
-      <!-- HERO SECTION -->
-      <section style="padding-top: 96px; padding-bottom: 80px; border-bottom: 1px solid var(--line); background: radial-gradient(ellipse 65% 55% at 50% 0%, #ffffff 0%, var(--bg) 100%);">
+    <section id="page-home" class="page-section active">
+      
+      <!-- HERO -->
+      <div style="padding-top: 96px; padding-bottom: 80px; border-bottom: 1px solid var(--line); background: radial-gradient(ellipse 65% 55% at 50% 0%, #ffffff 0%, var(--bg) 100%);">
         <div class="site-wrap">
           <div style="max-width: 820px;">
             <span class="kicker" id="hero-kicker">СИСТЕМНОЕ МЫШЛЕНИЕ И АРХИТЕКТУРА РЕШЕНИЙ</span>
@@ -302,15 +389,15 @@
               Авторская методология для тех, кто хочет преодолеть потолок личных и бизнес-решений, деконструировать скрытые закономерности среды и осознанно управлять своим масштабом.
             </p>
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-              <button onclick="navigateTo('methodology')" class="btn-primary" id="hero-btn1">Изучить методологию</button>
-              <button onclick="navigateTo('levelsCastes')" class="btn-secondary" id="hero-btn2">Найти свой уровень</button>
+              <a href="#methodology" class="btn-primary" id="hero-btn1">Изучить методологию</a>
+              <a href="#levelsCastes" class="btn-secondary" id="hero-btn2">Найти свой уровень</a>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       <!-- ПРОБЛЕМА -->
-      <section style="padding: 88px 0; border-bottom: 1px solid var(--line);">
+      <div style="padding: 88px 0; border-bottom: 1px solid var(--line);">
         <div class="site-wrap">
           <div style="max-width: 680px; margin-bottom: 48px;">
             <span class="kicker">Проблема тупиков роста</span>
@@ -334,4 +421,58 @@
             <div class="card-elevated">
               <span style="font-size: 28px; color: var(--accent); font-weight: 700; margin-bottom: 12px;">03</span>
               <h3 style="font-size: 20px; margin-bottom: 10px;">Чужие стратегии успеха</h3>
-              <p style="font-size: 15px; color: var(--muted);">Копирование ч
+              <p style="font-size: 15px; color: var(--muted);">Копирование чужих тактик без учета своего кастового ядра. То, что органично для Создателя систем, губительно для Исполнителя процессов.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ТРИАДА МЕТОДОЛОГИИ -->
+      <div style="padding: 88px 0; background-color: var(--bg-warm); border-bottom: 1px solid var(--line);">
+        <div class="site-wrap">
+          <div style="text-align: center; max-width: 700px; margin: 0 auto 52px;">
+            <span class="kicker">ТРИАДА МЕТОДОЛОГИИ</span>
+            <h2 style="font-size: 38px; margin-bottom: 14px;">Три вектора системного развития</h2>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(304px, 1fr)); gap: 26px;">
+            <div class="card-elevated">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <span style="width: 8px; height: 8px; background: var(--gold); border-radius: 50%;"></span>
+                <span style="font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.12em;">ОСНОВА</span>
+              </div>
+              <h3 style="font-size: 22px; margin-bottom: 12px;">Касты — модели мышления</h3>
+              <p style="font-size: 15px; color: var(--ink-2); margin-bottom: 20px;">Ролевые модели восприятия мира: от ремесленно-исполнительского до концептуального. Определение своего корневого ядра ценностей.</p>
+              <a href="#levelsCastes" style="color: var(--accent); font-weight: 700; font-size: 14px;">Исследовать касты →</a>
+            </div>
+
+            <div class="card-elevated">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%;"></span>
+                <span style="font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 0.12em;">МАСШТАБ</span>
+              </div>
+              <h3 style="font-size: 22px; margin-bottom: 12px;">Уровни — этапы осознанности</h3>
+              <p style="font-size: 15px; color: var(--ink-2); margin-bottom: 20px;">Глубина охвата реальности: от точечных локальных задач до проектирования сложных самоорганизующихся систем.</p>
+              <a href="#methodology" style="color: var(--accent); font-weight: 700; font-size: 14px;">Шкала осознанности →</a>
+            </div>
+
+            <div class="card-elevated">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <span style="width: 8px; height: 8px; background: var(--ink); border-radius: 50%;"></span>
+                <span style="font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: 0.12em;">РЕШЕНИЕ</span>
+              </div>
+              <h3 style="font-size: 22px; margin-bottom: 12px;">Стратегии — выбор действий</h3>
+              <p style="font-size: 15px; color: var(--ink-2); margin-bottom: 20px;">Практический арсенал: переход от реактивного реагирования к проактивному формированию правил игры.</p>
+              <a href="#strategies" style="color: var(--accent); font-weight: 700; font-size: 14px;">Матрица стратегий →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 ШАГОВ -->
+      <div style="padding: 88px 0; border-bottom: 1px solid var(--line);">
+        <div class="site-wrap">
+          <div style="max-width: 640px; margin-bottom: 52px;">
+            <span class="kicker">КАК РАБОТАЕТ СИСТЕМА</span>
+            <h2 style="font-size: 38px; margin-bottom: 12px;">Архитектура перехода</h2>
+            <p style="color: va
