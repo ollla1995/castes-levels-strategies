@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Касты. Уровни. Стратегии — Интеллектуальная методология мышления</title>
+  
+  <!-- Шрифты по спецификации: Manrope + Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+
+  <!-- React 18 & Babel для полностью автономной работы без сборщиков -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5f7f9;
+      --bg-warm: #eaeef2;
+      --surface: #ffffff;
+      --surface-2: #f7fafc;
+
+      --ink: #0A2540;
+      --ink-2: #22374f;
+      --muted: #61748a;
+      --faint: #93a3b5;
+
+      --line: #dde5ec;
+      --line-strong: #c3d0dc;
+
+      --accent: #00875A;
+      --accent-soft: #e8f7f0;
+      --accent-ink: #ffffff;
+
+      --gold: #D4AF37;
+      --ink-hover: #06182a;
+      --accent-hover: #006b48;
+      --accent-line: #e0ce9a;
+
+      --radius: 16px;
+      --radius-sm: 10px;
+      --wrap: 1320px;
+
+      --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+      --sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+      --shadow-sm: 0 1px 2px rgba(10,37,64,.05), 0 2px 8px rgba(10,37,64,.05);
+      --shadow-md: 0 4px 12px rgba(10,37,64,.07), 0 12px 32px rgba(10,37,64,.08);
+      --shadow-lg: 0 8px 24px rgba(0,135,90,.12), 0 24px 60px rgba(10,37,64,.12);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--sans);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.62;
+      font-weight: 500;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--serif);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    a, button {
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      border: none;
+      background: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-wrap {
+      max-width: var(--wrap);
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+      width: 100%;
+    }
+
+    .kicker {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+
+    .card-elevated {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 30px 28px 28px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.24s ease;
+      display: flex;
+      flex-direction: column;
+      justifyContent: space-between;
+    }
+
+    .card-elevated:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--line-strong);
+    }
+
+    .card-gold-accent {
+      border-top: 3px solid var(--gold);
+    }
+
+    .btn-primary {
+      padding: 15px 30px;
+      background-color: var(--ink);
+      color: #ffffff;
+      border-radius: var(--radius-sm);
+      font-size: 15.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      background-color: var(--ink-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-accent {
+      padding: 15px 30px;
+      background-color: var(--accent);
+      color: var(--accent-ink);
+      border-radius: var(--radius-sm);
+      font-size: 15.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      padding: 14px 28px;
+      background-color: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      font-size: 15.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-secondary:hover {
+      border-color: var(--ink);
+    }
+
+    /* Адаптивная навигация */
+    @media (max-width: 960px) {
+      .desktop-only { display: none !important; }
+      .mobile-only { display: flex !important; }
+    }
+    @media (min-width: 961px) {
+      .desktop-only { display: flex !important; }
+      .mobile-only { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ==========================================
+    // 1. ДАННЫЕ И МУЛЬТИЯЗЫЧНЫЕ СЛОВАРИ (RU/UK/EN)
+    // ==========================================
+    const translations = {
+      ru: {
+        brand: "Касты. Уровни. Стратегии",
+        tagline: "Авторская онтологическая методология для тех, кто хочет лучше понимать себя, людей и закономерности развития — и осознанно управлять своими решениями.",
+        nav: {
+          home: "Главная",
+          methodology: "Методология",
+          levelsCastes: "Уровни и Касты",
+          strategies: "Стратегии",
+          products: "Продукты",
+          programs: "Программы",
+          consultations: "Консультации",
+          club: "Клуб",
+          about: "Об авторе",
+          cart: "Корзина",
+          dashboard: "Кабинет"
+        },
+        hero: {
+          kicker: "СИСТЕМНОЕ МЫШЛЕНИЕ И АРХИТЕКТУРА РЕШЕНИЙ",
+          title: "Понимай систему. Выбирай стратегию. Переходи на новый уровень.",
+          subtitle: "Авторская методология для тех, кто хочет преодолеть потолок личных и бизнес-решений, деконструировать скрытые закономерности среды и осознанно управлять своим масштабом.",
+          btn1: "Изучить методологию",
+          btn2: "Найти свой уровень"
+        },
+        triad: {
+          kicker: "ТРИАДА МЕТОДОЛОГИИ",
+          title: "Три вектора системного развития",
+          castesTitle: "Касты — модели мышления",
+          castesDesc: "Ролевые модели восприятия мира: от ремесленно-исполнительского до концептуального. Определение своего корневого ядра ценностей.",
+          levelsTitle: "Уровни — этапы осознанности",
+          levelsDesc: "Глубина охвата реальности: от точечных локальных задач до проектирования сложных самоорганизующихся систем.",
+          strategiesTitle: "Стратегии — выбор действий",
+          strategiesDesc: "Практический арсенал: переход от реактивного реагирования к проактивному формированию правил игры."
+        },
+        steps: {
+          kicker: "КАК РАБОТАЕТ СИСТЕМА",
+          title: "Архитектура перехода",
+          subtitle: "Последовательная цепочка качественной трансформации мышления:",
+          items: [
+            { num: "01", name: "Осознание", desc: "Фиксация текущей точки А и выявление ментальных автоматизмов." },
+            { num: "02", name: "Диагностика", desc: "Точное определение текущей касты, уровня и ресурсных утечек." },
+            { num: "03", name: "Понимание", desc: "Раскрытие законов среды, в которой разворачивается деятельность." },
+            { num: "04", name: "Выбор стратегии", desc: "Отказ от неподходящих сценариев и кристаллизация вектора." },
+            { num: "05", name: "Действие", desc: "Внедрение регулярных микрорешений высокой точности." },
+            { num: "06", name: "Результат", desc: "Устойчивый переход в новое качественное состояние." }
+          ]
+        },
+        cta: {
+          title: "Готовы перейти на следующий уровень?",
+          desc: "Начните с диагностической карты мышления или выберите базовый атлас стратегий для самостоятельного аудита текущих решений.",
+          btn: "Начать переход"
+        }
+      },
+      uk: {
+        brand: "Касти. Рівні. Стратегії",
+        tagline: "Авторська онтологічна методологія для тих, хто прагне краще розуміти себе, людей та закономірності розвитку — й усвідомлено керувати рішеннями.",
+        nav: {
+          home: "Головна",
+          methodology: "Методологія",
+          levelsCastes: "Рівні та Касти",
+          strategies: "Стратегії",
+          products: "Продукти",
+          programs: "Програми",
+          consultations: "Консультації",
+          club: "Клуб",
+          about: "Про автора",
+          cart: "Кошик",
+          dashboard: "Кабінет"
+        },
+        hero: {
+          kicker: "СИСТЕМНЕ МИСЛЕННЯ ТА АРХІТЕКТУРА РІШЕНЬ",
+          title: "Розумій систему. Обирай стратегію. Переходь на новий рівень.",
+          subtitle: "Авторська методологія для тих, хто прагне подолати межу особистих і бізнес-рішень, деконструювати приховані закономірності середовища й усвідомлено керувати власним масштабом.",
+          btn1: "Дослідити методологію",
+          btn2: "Знайти свій рівень"
+        },
+        triad: {
+          kicker: "ТРІАДА МЕТОДОЛОГІЇ",
+          title: "Три вектори системного розвитку",
+          castesTitle: "Касти — моделі мислення",
+          castesDesc: "Рольові моделі сприйняття світу: від ремісничо-виконавчого до концептуального. Визначення кореневого ядра цінностей.",
+          levelsTitle: "Рівні — етапи усвідомленості",
+          levelsDesc: "Глибина охоплення реальності: від точкових локальних завдань до проектування складних самоорганізованих систем.",
+          strategiesTitle: "Стратегії — вибір дій",
+          strategiesDesc: "Практичний арсенал: перехід від реактивного реагування до проактивного формування правил гри."
+        },
+        steps: {
+          kicker: "ЯК ПРАЦЮЄ СИСТЕМА",
+          title: "Архітектура переходу",
+          subtitle: "Послідовний ланцюг якісної трансформації мислення:",
+          items: [
+            { num: "01", name: "Усвідомлення", desc: "Фіксація поточної точки А та виявлення ментальних автоматизмів." },
+            { num: "02", name: "Діагностика", desc: "Точне визначення поточної касти, рівня і втрат ресурсу." },
+            { num: "03", name: "Розуміння", desc: "Розкриття законів середовища, в якому розгортається діяльність." },
+            { num: "04", name: "Вибір стратегії", desc: "Відмова від невідповідних сценаріїв та кристалізація вектора." },
+            { num: "05", name: "Дія", desc: "Впровадження регулярних мікрорішень високої точності." },
+            { num: "06", name: "Результат", desc: "Стійкий перехід у новий якісний стан та масштаб." }
+          ]
+        },
+        cta: {
+          title: "Готові перейти на наступний рівень?",
+          desc: "Розпочніть із діагностичної карти мислення або оберіть базовий атлас стратегій для аудиту поточних рішень.",
+          btn: "Розпочати перехід"
+        }
+      },
+      en: {
+        brand: "Castes. Levels. Strategies",
+        tagline: "Proprietary ontological methodology for discerning leaders striving to decode systems and consciously govern high-stakes decisions.",
+        nav: {
+          home: "Home",
+          methodology: "Methodology",
+          levelsCastes: "Levels & Castes",
+          strategies: "Strategies",
+          products: "Products",
+          programs: "Programs",
+          consultations: "Consulting",
+          club: "Club",
+          about: "About",
+          cart: "Cart",
+          dashboard: "Portal"
+        },
+        hero: {
+          kicker: "SYSTEMIC COGNITION & DECISION ARCHITECTURE",
+          title: "Understand the system. Choose the strategy. Reach the next level.",
+          subtitle: "A disciplined framewor
