@@ -5,15 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Касты. Уровни. Стратегии — Интеллектуальная методология мышления</title>
   
-  <!-- Шрифты по спецификации: Manrope + Playfair Display -->
+  <!-- Шрифты Google Fonts: Manrope + Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
-
-  <!-- React 18 & Babel для полностью автономной работы без сборщиков -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
     :root {
@@ -66,6 +61,9 @@
       font-weight: 500;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     h1, h2, h3, h4 {
@@ -179,7 +177,54 @@
       border-color: var(--ink);
     }
 
-    /* Адаптивная навигация */
+    /* Навигация */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: 64px;
+      background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      padding: 6px 0;
+      position: relative;
+    }
+    .nav-link.active {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .lang-btn {
+      padding: 3px 7px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .lang-btn.active {
+      background-color: var(--surface);
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
     @media (max-width: 960px) {
       .desktop-only { display: none !important; }
       .mobile-only { display: flex !important; }
@@ -191,136 +236,102 @@
   </style>
 </head>
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <!-- ШАПКА САЙТА (HEADER) -->
+  <header>
+    <div class="site-wrap" style="display: flex; align-items: center; justify-content: space-between;">
+      
+      <!-- Логотип -->
+      <div onclick="navigateTo('home')" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <span style="width: 10px; height: 10px; background-color: var(--accent); border-radius: 2px; display: inline-block;"></span>
+        <span id="ui-brand" style="font-family: var(--serif); font-weight: 700; fontSize: 18px; color: var(--ink);">
+          Касты. Уровни. Стратегии
+        </span>
+      </div>
 
-    // ==========================================
-    // 1. ДАННЫЕ И МУЛЬТИЯЗЫЧНЫЕ СЛОВАРИ (RU/UK/EN)
-    // ==========================================
-    const translations = {
-      ru: {
-        brand: "Касты. Уровни. Стратегии",
-        tagline: "Авторская онтологическая методология для тех, кто хочет лучше понимать себя, людей и закономерности развития — и осознанно управлять своими решениями.",
-        nav: {
-          home: "Главная",
-          methodology: "Методология",
-          levelsCastes: "Уровни и Касты",
-          strategies: "Стратегии",
-          products: "Продукты",
-          programs: "Программы",
-          consultations: "Консультации",
-          club: "Клуб",
-          about: "Об авторе",
-          cart: "Корзина",
-          dashboard: "Кабинет"
-        },
-        hero: {
-          kicker: "СИСТЕМНОЕ МЫШЛЕНИЕ И АРХИТЕКТУРА РЕШЕНИЙ",
-          title: "Понимай систему. Выбирай стратегию. Переходи на новый уровень.",
-          subtitle: "Авторская методология для тех, кто хочет преодолеть потолок личных и бизнес-решений, деконструировать скрытые закономерности среды и осознанно управлять своим масштабом.",
-          btn1: "Изучить методологию",
-          btn2: "Найти свой уровень"
-        },
-        triad: {
-          kicker: "ТРИАДА МЕТОДОЛОГИИ",
-          title: "Три вектора системного развития",
-          castesTitle: "Касты — модели мышления",
-          castesDesc: "Ролевые модели восприятия мира: от ремесленно-исполнительского до концептуального. Определение своего корневого ядра ценностей.",
-          levelsTitle: "Уровни — этапы осознанности",
-          levelsDesc: "Глубина охвата реальности: от точечных локальных задач до проектирования сложных самоорганизующихся систем.",
-          strategiesTitle: "Стратегии — выбор действий",
-          strategiesDesc: "Практический арсенал: переход от реактивного реагирования к проактивному формированию правил игры."
-        },
-        steps: {
-          kicker: "КАК РАБОТАЕТ СИСТЕМА",
-          title: "Архитектура перехода",
-          subtitle: "Последовательная цепочка качественной трансформации мышления:",
-          items: [
-            { num: "01", name: "Осознание", desc: "Фиксация текущей точки А и выявление ментальных автоматизмов." },
-            { num: "02", name: "Диагностика", desc: "Точное определение текущей касты, уровня и ресурсных утечек." },
-            { num: "03", name: "Понимание", desc: "Раскрытие законов среды, в которой разворачивается деятельность." },
-            { num: "04", name: "Выбор стратегии", desc: "Отказ от неподходящих сценариев и кристаллизация вектора." },
-            { num: "05", name: "Действие", desc: "Внедрение регулярных микрорешений высокой точности." },
-            { num: "06", name: "Результат", desc: "Устойчивый переход в новое качественное состояние." }
-          ]
-        },
-        cta: {
-          title: "Готовы перейти на следующий уровень?",
-          desc: "Начните с диагностической карты мышления или выберите базовый атлас стратегий для самостоятельного аудита текущих решений.",
-          btn: "Начать переход"
-        }
-      },
-      uk: {
-        brand: "Касти. Рівні. Стратегії",
-        tagline: "Авторська онтологічна методологія для тих, хто прагне краще розуміти себе, людей та закономірності розвитку — й усвідомлено керувати рішеннями.",
-        nav: {
-          home: "Головна",
-          methodology: "Методологія",
-          levelsCastes: "Рівні та Касти",
-          strategies: "Стратегії",
-          products: "Продукти",
-          programs: "Програми",
-          consultations: "Консультації",
-          club: "Клуб",
-          about: "Про автора",
-          cart: "Кошик",
-          dashboard: "Кабінет"
-        },
-        hero: {
-          kicker: "СИСТЕМНЕ МИСЛЕННЯ ТА АРХІТЕКТУРА РІШЕНЬ",
-          title: "Розумій систему. Обирай стратегію. Переходь на новий рівень.",
-          subtitle: "Авторська методологія для тих, хто прагне подолати межу особистих і бізнес-рішень, деконструювати приховані закономірності середовища й усвідомлено керувати власним масштабом.",
-          btn1: "Дослідити методологію",
-          btn2: "Знайти свій рівень"
-        },
-        triad: {
-          kicker: "ТРІАДА МЕТОДОЛОГІЇ",
-          title: "Три вектори системного розвитку",
-          castesTitle: "Касти — моделі мислення",
-          castesDesc: "Рольові моделі сприйняття світу: від ремісничо-виконавчого до концептуального. Визначення кореневого ядра цінностей.",
-          levelsTitle: "Рівні — етапи усвідомленості",
-          levelsDesc: "Глибина охоплення реальності: від точкових локальних завдань до проектування складних самоорганізованих систем.",
-          strategiesTitle: "Стратегії — вибір дій",
-          strategiesDesc: "Практичний арсенал: перехід від реактивного реагування до проактивного формування правил гри."
-        },
-        steps: {
-          kicker: "ЯК ПРАЦЮЄ СИСТЕМА",
-          title: "Архітектура переходу",
-          subtitle: "Послідовний ланцюг якісної трансформації мислення:",
-          items: [
-            { num: "01", name: "Усвідомлення", desc: "Фіксація поточної точки А та виявлення ментальних автоматизмів." },
-            { num: "02", name: "Діагностика", desc: "Точне визначення поточної касти, рівня і втрат ресурсу." },
-            { num: "03", name: "Розуміння", desc: "Розкриття законів середовища, в якому розгортається діяльність." },
-            { num: "04", name: "Вибір стратегії", desc: "Відмова від невідповідних сценаріїв та кристалізація вектора." },
-            { num: "05", name: "Дія", desc: "Впровадження регулярних мікрорішень високої точності." },
-            { num: "06", name: "Результат", desc: "Стійкий перехід у новий якісний стан та масштаб." }
-          ]
-        },
-        cta: {
-          title: "Готові перейти на наступний рівень?",
-          desc: "Розпочніть із діагностичної карти мислення або оберіть базовий атлас стратегій для аудиту поточних рішень.",
-          btn: "Розпочати перехід"
-        }
-      },
-      en: {
-        brand: "Castes. Levels. Strategies",
-        tagline: "Proprietary ontological methodology for discerning leaders striving to decode systems and consciously govern high-stakes decisions.",
-        nav: {
-          home: "Home",
-          methodology: "Methodology",
-          levelsCastes: "Levels & Castes",
-          strategies: "Strategies",
-          products: "Products",
-          programs: "Programs",
-          consultations: "Consulting",
-          club: "Club",
-          about: "About",
-          cart: "Cart",
-          dashboard: "Portal"
-        },
-        hero: {
-          kicker: "SYSTEMIC COGNITION & DECISION ARCHITECTURE",
-          title: "Understand the system. Choose the strategy. Reach the next level.",
-          subtitle: "A disciplined framewor
+      <!-- Десктопная навигация -->
+      <nav class="desktop-only" style="gap: 22px; align-items: center;">
+        <a class="nav-link active" onclick="navigateTo('home')" id="nav-home">Главная</a>
+        <a class="nav-link" onclick="navigateTo('methodology')" id="nav-methodology">Методология</a>
+        <a class="nav-link" onclick="navigateTo('levelsCastes')" id="nav-levelsCastes">Уровни и Касты</a>
+        <a class="nav-link" onclick="navigateTo('strategies')" id="nav-strategies">Стратегии</a>
+        <a class="nav-link" onclick="navigateTo('products')" id="nav-products">Продукты</a>
+        <a class="nav-link" onclick="navigateTo('programs')" id="nav-programs">Программы</a>
+        <a class="nav-link" onclick="navigateTo('club')" id="nav-club">Клуб</a>
+        <a class="nav-link" onclick="navigateTo('about')" id="nav-about">Об авторе</a>
+      </nav>
+
+      <!-- Правый блок: Языки + Корзина + Кабинет -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <!-- Переключатель языка -->
+        <div style="display: flex; gap: 3px; background-color: var(--bg-warm); padding: 3px; border-radius: 6px;">
+          <button class="lang-btn active" onclick="setLanguage('ru')" id="btn-lang-ru">RU</button>
+          <button class="lang-btn" onclick="setLanguage('uk')" id="btn-lang-uk">UK</button>
+          <button class="lang-btn" onclick="setLanguage('en')" id="btn-lang-en">EN</button>
+        </div>
+
+        <!-- Корзина -->
+        <button onclick="navigateTo('cart')" style="padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background-color: var(--surface); color: var(--ink); font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+          <span id="ui-cart-text">Корзина</span>
+          <span id="cart-counter" style="background-color: var(--accent); color: white; border-radius: 50%; width: 18px; height: 18px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">0</span>
+        </button>
+
+        <!-- Кабинет -->
+        <button onclick="navigateTo('dashboard')" class="desktop-only" style="padding: 7px 14px; border-radius: var(--radius-sm); background-color: var(--ink); color: #ffffff; font-size: 13.5px; font-weight: 600;">
+          <span id="ui-dashboard-text">Кабинет</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ (СТРАНИЦЫ) -->
+  <main style="flex: 1;">
+
+    <!-- 1. СТРАНИЦА: ГЛАВНАЯ -->
+    <div id="page-home" class="tab-content active">
+      <!-- HERO SECTION -->
+      <section style="padding-top: 96px; padding-bottom: 80px; border-bottom: 1px solid var(--line); background: radial-gradient(ellipse 65% 55% at 50% 0%, #ffffff 0%, var(--bg) 100%);">
+        <div class="site-wrap">
+          <div style="max-width: 820px;">
+            <span class="kicker" id="hero-kicker">СИСТЕМНОЕ МЫШЛЕНИЕ И АРХИТЕКТУРА РЕШЕНИЙ</span>
+            <h1 id="hero-title" style="font-size: clamp(34px, 5.2vw, 58px); margin-bottom: 22px;">
+              Понимай систему. Выбирай стратегию. Переходи на новый уровень.
+            </h1>
+            <p id="hero-subtitle" style="font-size: 18px; color: var(--ink-2); max-width: 620px; margin-bottom: 36px;">
+              Авторская методология для тех, кто хочет преодолеть потолок личных и бизнес-решений, деконструировать скрытые закономерности среды и осознанно управлять своим масштабом.
+            </p>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+              <button onclick="navigateTo('methodology')" class="btn-primary" id="hero-btn1">Изучить методологию</button>
+              <button onclick="navigateTo('levelsCastes')" class="btn-secondary" id="hero-btn2">Найти свой уровень</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ПРОБЛЕМА -->
+      <section style="padding: 88px 0; border-bottom: 1px solid var(--line);">
+        <div class="site-wrap">
+          <div style="max-width: 680px; margin-bottom: 48px;">
+            <span class="kicker">Проблема тупиков роста</span>
+            <h2 style="font-size: 36px; margin-bottom: 16px;">Почему привычные усилия больше не создают кратных результатов</h2>
+            <p style="color: var(--muted); font-size: 17px;">
+              Большинство людей пытаются решить проблемы нового масштаба инструментами старого мышления. Без понимания своей касты и уровня любая тактика превращается в изнуряющий бег по кругу.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(304px, 1fr)); gap: 26px;">
+            <div class="card-elevated">
+              <span style="font-size: 28px; color: var(--accent); font-weight: 700; margin-bottom: 12px;">01</span>
+              <h3 style="font-size: 20px; margin-bottom: 10px;">Повторение привычных сценариев</h3>
+              <p style="font-size: 15px; color: var(--muted);">Человек меняет ниши или проекты, но воспроизводит одну и ту же базовую схему и снова упирается в тот же потолок.</p>
+            </div>
+            <div class="card-elevated">
+              <span style="font-size: 28px; color: var(--accent); font-weight: 700; margin-bottom: 12px;">02</span>
+              <h3 style="font-size: 20px; margin-bottom: 10px;">Слепота к системным законам</h3>
+              <p style="font-size: 15px; color: var(--muted);">Попытка бороться со следствиями вместо первопричин. Отсутствие онтологической оптики скрывает реальную расстановку сил в среде.</p>
+            </div>
+            <div class="card-elevated">
+              <span style="font-size: 28px; color: var(--accent); font-weight: 700; margin-bottom: 12px;">03</span>
+              <h3 style="font-size: 20px; margin-bottom: 10px;">Чужие стратегии успеха</h3>
+              <p style="font-size: 15px; color: var(--muted);">Копирование ч
